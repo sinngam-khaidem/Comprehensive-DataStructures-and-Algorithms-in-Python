@@ -56,6 +56,8 @@ class ArraySolution:
                 hm[s_sorted] = [s]
         return hm.values()
     
+    # Top K Frequent elements - Sorting approach O(nlogn)
+    # Using a heap could reduce time to O(klogn)
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
         hm = {}
         for n in nums:
@@ -68,5 +70,40 @@ class ArraySolution:
         for i in range(k):
             result.append(mappings[i][0])
         return result
+    
+    # Top K Frequent elements - Bucket Sort approach O(k+n) ~ O(n)
+    # https://www.youtube.com/watch?v=YPTqKIgVk-k&t=22s
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        count = {}
+        freq = [[] for i in range(len(nums) + 1)]
 
-print(ArraySolution().topKFrequent([1,1,1,2,2,3], 2))
+        for n in nums:
+            count[n] = 1 + count.get(n, 0)
+        for n, c in count.items():
+            freq[c].append(n)
+        
+        res = []
+        for i in range(len(freq)-1, 0, -1):
+            for n in freq[i]:
+                res.append(n)
+                if len(res) == k:
+                    return res
+
+    # Longest Consecutive Sequence
+    def longestConsecutive(self, nums: List[int]) -> int:
+        if len(nums) == 0:
+            return 0
+        nums.sort()
+        curCount = 1
+        maxCount = 1
+        prev = nums[0] 
+        for n in nums:
+            if n - 1 == prev:
+                curCount += 1
+            elif n - 1 > prev:
+                curCount = 1
+            maxCount = max(curCount, maxCount)
+            prev = n
+        return maxCount
+
+print(ArraySolution().topKFrequent([1,1,1,2,2,3], 3))
